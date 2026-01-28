@@ -1,3 +1,22 @@
+| [⚙️ Setup Guide](SETUP.md) | [📖 README](README.md) | [🚀 Quick Start](QUICKSTART.md) | [📁 Project Structure](STRUCTURE.md) |
+|---|---|---|---|
+
+# 🎟️ BigCommerce Coupon Management System
+
+A comprehensive suite of tools for creating, managing, and exporting coupons on BigCommerce. Generate up to 800 unique coupons with custom prefixes, bulk creation, and web-based management interface.
+
+## 📋 Features
+
+✅ **Bulk Coupon Generation** - Create up to 800 unique coupons at once  
+✅ **Custom Coupon Codes** - Set prefix and auto-generate unique suffixes (e.g., GETLINKED993JTO)  
+✅ **Product Selection** - Select specific products or apply to all products  
+✅ **Flexible Discounts** - Percentage discounts with customizable amounts  
+✅ **Usage Controls** - Set max uses per customer and minimum purchase amounts  
+✅ **Web Interface** - Beautiful HTML dashboard for easy management  
+✅ **Excel Export** - Automatic export of generated coupons  
+✅ **Duplicate Prevention** - Automatically skip existing coupon codes  
+✅ **Responsive Design** - Works on desktop, tablet, and mobile  
+
 # Getting Started
 
 ## 1. Setup
@@ -182,3 +201,14 @@ taskkill /PID <PID> /F
 - Check `docs/STRUCTURE.md` for file organization
 - For CLI usage, refer to CLI Scripts section above
 - For advanced features, check the Coupon Manager tabs
+
+
+## 📝 License
+
+This tool is for BigCommerce API integration. Ensure you have proper permissions and follow BigCommerce's terms of service.
+
+---
+
+**Created:** January 2026  
+**Version:** 1.0.0  
+**Author:** BigCommerce Coupon Manager System
