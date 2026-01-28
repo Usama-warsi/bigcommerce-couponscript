@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigCommerce Coupon Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="email"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="email"]:focus,
+        input[type="date"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .product-list {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .product-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+
+        .product-item:last-child {
+            border-bottom: none;
+        }
+
+        .product-item input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .product-item label {
+            margin-bottom: 0;
+            font-weight: normal;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            font-size: 1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .selected-products {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            min-height: 40px;
+            border: 1px dashed #667eea;
+        }
+
+        .selected-products p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .product-tag {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            margin: 5px 5px 5px 0;
+            font-size: 0.85em;
+        }
+
+        .product-tag .remove {
+            margin-left: 5px;
+            cursor: pointer;
+        }
+
+        .status-section {
+            grid-column: 1 / -1;
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+        }
+
+        .status-box {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border-left: 4px solid #28a745;
+        }
+
+        .status-box.loading {
+            border-left-color: #ffc107;
+        }
+
+        .status-box.error {
+            border-left-color: #dc3545;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-card h3 {
+            color: #667eea;
+            font-size: 2em;
+            margin: 10px 0;
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .existing-coupons {
+            margin-top: 20px;
+        }
+
+        .coupon-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .coupon-table thead {
+            background: #667eea;
+            color: white;
+        }
+
+        .coupon-table th,
+        .coupon-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .coupon-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        @media (max-width: 1024px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .toggle-btn {
+            background: #667eea;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+        }
+
+        .toggle-btn:hover {
+            background: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎟️ BigCommerce Coupon Manager</h1>
+            <p>Create, manage, and export coupons with ease</p>
+        </div>
+
+        <div class="content">
+            <!-- LEFT SECTION: Configuration -->
+            <div class="section">
+                <h2>⚙️ Coupon Configuration</h2>
+
+                <div class="form-group">
+                    <label for="couponPrefix">Coupon Code Prefix *</label>
+                    <input type="text" id="couponPrefix" placeholder="e.g., GETLINKED" value="GETLINKED" required>
+                    <small style="color: #666; margin-top: 5px; display: block;">Generated codes will be like: GETLINKED993JTO</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="namePrefix">Coupon Name Prefix *</label>
+                    <input type="text" id="namePrefix" placeholder="e.g., SHOPIFY 100 OFF" value="SHOPIFY 100 OFF" required>
+                    <small style="color: #666; margin-top: 5px; display: block;">Generated names will be like: SHOPIFY 100 OFF 1 of 100</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="quantity">Number of Coupons to Generate *</label>
+                    <input type="number" id="quantity" min="1" max="800" value="10" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="discount">Discount Amount (%)*</label>
+                    <input type="number" id="discount" min="0" max="100" value="100" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="minPurchase">Minimum Purchase Amount ($)</label>
+                    <input type="number" id="minPurchase" min="0" value="0" step="0.01">
+                </div>
+
+                <div class="form-group">
+                    <label for="maxUsesPerCustomer">Max Uses Per Customer *</label>
+                    <input type="number" id="maxUsesPerCustomer" min="1" value="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="expiryDate">Expiry Date (Optional)</label>
+                    <input type="date" id="expiryDate">
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary" onclick="loadProducts()">🔄 Load Products</button>
+                </div>
+            </div>
+
+            <!-- RIGHT SECTION: Product Selection -->
+            <div class="section">
+                <h2>📦 Select Products</h2>
+
+                <div class="form-group">
+                    <label for="productSearch">Search Products</label>
+                    <input type="text" id="productSearch" placeholder="Search by name or ID..." onkeyup="filterProducts()">
+                </div>
+
+                <label>Products List:</label>
+                <div class="product-list" id="productList">
+                    <p style="color: #999; padding: 20px; text-align: center;">Click "Load Products" to fetch from store</p>
+                </div>
+
+                <div class="selected-products">
+                    <p><strong>Selected Products:</strong></p>
+                    <div id="selectedProductsList" style="margin-top: 10px;"></div>
+                    <p id="selectedCount" style="margin-top: 10px; color: #666;"></p>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-secondary" onclick="clearSelection()">Clear Selection</button>
+                </div>
+            </div>
+
+            <!-- STATUS & EXISTING COUPONS -->
+            <div class="status-section">
+                <h2>📊 Status & Actions</h2>
+
+                <div id="statusBox" style="display: none;" class="status-box">
+                    <span class="loading-spinner" id="spinner"></span>
+                    <span id="statusText">Initializing...</span>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <p>Products Selected</p>
+                        <h3 id="statProducts">0</h3>
+                    </div>
+                    <div class="stat-card">
+                        <p>Coupons to Generate</p>
+                        <h3 id="statQuantity">10</h3>
+                    </div>
+                    <div class="stat-card">
+                        <p>Existing Coupons</p>
+                        <h3 id="statExisting">0</h3>
+                    </div>
+                    <div class="stat-card">
+                        <p>Store Status</p>
+                        <h3 id="statStatus">Ready</h3>
+                    </div>
+                </div>
+
+                <div class="button-group" style="margin-top: 20px;">
+                    <button class="btn-primary" onclick="validateAndGenerate()">✨ Generate Coupons</button>
+                    <button class="btn-secondary" onclick="loadExistingCoupons()">📋 Refresh Existing</button>
+                </div>
+
+                <!-- Existing Coupons Table -->
+                <div class="existing-coupons" id="existingCouponsDiv" style="display: none;">
+                    <h3>Recent Coupons</h3>
+                    <div style="overflow-x: auto; margin-top: 15px;">
+                        <table class="coupon-table">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>ID</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="existingCouponsTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        let allProducts = [];
+        let selectedProductIds = [];
+        let existingCoupons = [];
+
+        /* ==================== UI FUNCTIONS ==================== */
+
+        function showStatus(message, isLoading = false, isError = false) {
+            const box = document.getElementById('statusBox');
+            const spinner = document.getElementById('spinner');
+            const text = document.getElementById('statusText');
+            
+            box.style.display = 'block';
+            box.className = 'status-box' + (isLoading ? ' loading' : '') + (isError ? ' error' : '');
+            spinner.style.display = isLoading ? 'inline-block' : 'none';
+            text.textContent = message;
+        }
+
+        function hideStatus() {
+            document.getElementById('statusBox').style.display = 'none';
+        }
+
+        function updateStats() {
+            document.getElementById('statProducts').textContent = selectedProductIds.length;
+            document.getElementById('statQuantity').textContent = document.getElementById('quantity').value;
+            document.getElementById('statExisting').textContent = existingCoupons.length;
+        }
+
+        function filterProducts() {
+            const search = document.getElementById('productSearch').value.toLowerCase();
+            const items = document.querySelectorAll('.product-item');
+            
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(search) ? 'flex' : 'none';
+            });
+        }
+
+        function clearSelection() {
+            selectedProductIds = [];
+            document.querySelectorAll('.product-item input[type="checkbox"]').forEach(cb => cb.checked = false);
+            updateSelectedProducts();
+        }
+
+        function updateSelectedProducts() {
+            const container = document.getElementById('selectedProductsList');
+            const count = document.getElementById('selectedCount');
+            
+            if (selectedProductIds.length === 0) {
+                container.innerHTML = '<p style="color: #999;">No products selected</p>';
+                count.textContent = '⚠️ Select at least one product';
+                count.style.color = '#dc3545';
+            } else {
+                const products = allProducts.filter(p => selectedProductIds.includes(p.id));
+                container.innerHTML = products.map(p => 
+                    `<span class="product-tag">${p.name} (ID: ${p.id}) <span class="remove" onclick="removeProduct(${p.id})">✕</span></span>`
+                ).join('');
+                count.textContent = `✅ ${selectedProductIds.length} product${selectedProductIds.length > 1 ? 's' : ''} selected`;
+                count.style.color = '#28a745';
+            }
+            updateStats();
+        }
+
+        function removeProduct(productId) {
+            selectedProductIds = selectedProductIds.filter(id => id !== productId);
+            document.querySelector(`input[value="${productId}"]`).checked = false;
+            updateSelectedProducts();
+        }
+
+        /* ==================== API FUNCTIONS ==================== */
+
+        async function loadProducts() {
+            showStatus('Loading products from store...', true);
+            try {
+                const response = await fetch(`${API_URL}/products`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    allProducts = data.products;
+                    renderProducts(data.products);
+                    hideStatus();
+                    showStatus(`✅ Loaded ${data.products.length} products`, false);
+                    setTimeout(hideStatus, 2000);
+                } else {
+                    showStatus(`❌ Error: ${data.message}`, false, true);
+                }
+            } catch (error) {
+                showStatus(`❌ Failed to load products: ${error.message}`, false, true);
+            }
+        }
+
+        function renderProducts(products) {
+            const list = document.getElementById('productList');
+            list.innerHTML = products.map(product => `
+                <div class="product-item">
+                    <input type="checkbox" value="${product.id}" id="product-${product.id}" 
+                        onchange="toggleProduct(${product.id})">
+                    <label for="product-${product.id}">
+                        <strong>${product.name}</strong> <span style="color: #999;">(ID: ${product.id})</span>
+                    </label>
+                </div>
+            `).join('');
+        }
+
+        function toggleProduct(productId) {
+            const checkbox = document.querySelector(`input[value="${productId}"]`);
+            if (checkbox.checked) {
+                if (!selectedProductIds.includes(productId)) {
+                    selectedProductIds.push(productId);
+                }
+            } else {
+                selectedProductIds = selectedProductIds.filter(id => id !== productId);
+            }
+            updateSelectedProducts();
+        }
+
+        async function loadExistingCoupons() {
+            showStatus('Loading existing coupons...', true);
+            try {
+                const response = await fetch(`${API_URL}/existing-coupons`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    existingCoupons = data.coupons;
+                    renderExistingCoupons(data.coupons);
+                    updateStats();
+                    hideStatus();
+                } else {
+                    showStatus(`❌ Error: ${data.message}`, false, true);
+                }
+            } catch (error) {
+                showStatus(`❌ Failed to load coupons: ${error.message}`, false, true);
+            }
+        }
+
+        function renderExistingCoupons(coupons) {
+            const tbody = document.getElementById('existingCouponsTable');
+            const div = document.getElementById('existingCouponsDiv');
+            
+            div.style.display = 'block';
+            tbody.innerHTML = coupons.slice(0, 10).map(coupon => `
+                <tr>
+                    <td><strong>${coupon.code}</strong></td>
+                    <td>${coupon.id}</td>
+                    <td>${coupon.type || 'N/A'}</td>
+                    <td>${coupon.amount || 'N/A'}</td>
+                    <td><span class="badge ${coupon.enabled ? 'badge-success' : 'badge-danger'}">
+                        ${coupon.enabled ? 'Active' : 'Disabled'}
+                    </span></td>
+                </tr>
+            `).join('');
+        }
+
+        function validateAndGenerate() {
+            const codePrefix = document.getElementById('couponPrefix').value.trim();
+            const namePrefix = document.getElementById('namePrefix').value.trim();
+            const quantity = parseInt(document.getElementById('quantity').value);
+
+            if (!codePrefix) {
+                showStatus('❌ Please enter a coupon code prefix', false, true);
+                return;
+            }
+
+            if (!namePrefix) {
+                showStatus('❌ Please enter a coupon name prefix', false, true);
+                return;
+            }
+
+            if (selectedProductIds.length === 0) {
+                showStatus('❌ Please select at least one product', false, true);
+                return;
+            }
+
+            if (quantity < 1 || quantity > 800) {
+                showStatus('❌ Quantity must be between 1 and 800', false, true);
+                return;
+            }
+
+            generateCoupons();
+        }
+
+        async function generateCoupons() {
+            const payload = {
+                quantity: parseInt(document.getElementById('quantity').value),
+                codePrefix: document.getElementById('couponPrefix').value,
+                namePrefix: document.getElementById('namePrefix').value,
+                productIds: selectedProductIds,
+                discount: parseFloat(document.getElementById('discount').value),
+                minPurchase: parseFloat(document.getElementById('minPurchase').value),
+                maxUsesPerCustomer: parseInt(document.getElementById('maxUsesPerCustomer').value),
+                expiryDate: document.getElementById('expiryDate').value || null
+            };
+
+            showStatus(`Generating ${payload.quantity} coupons...`, true);
+
+            try {
+                const response = await fetch(`${API_URL}/generate-coupons`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showStatus(`✅ Successfully generated ${data.results.length} coupons! Download: ${data.filename}`, false);
+                    loadExistingCoupons();
+                    setTimeout(() => {
+                        if (data.downloadUrl) {
+                            window.location.href = data.downloadUrl;
+                        }
+                    }, 1000);
+                } else {
+                    showStatus(`❌ Error: ${data.message}`, false, true);
+                }
+            } catch (error) {
+                showStatus(`❌ Failed to generate coupons: ${error.message}`, false, true);
+            }
+        }
+
+        /* ==================== INITIALIZATION ==================== */
+
+        window.addEventListener('load', () => {
+            loadExistingCoupons();
+            document.getElementById('quantity').addEventListener('change', updateStats);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Environment variables
+config/.env
+!config/.env.example
+
+# Generated files
+*.xlsx
+*.csv
+data/
+
+# API credentials and keys
+*credentials*
+keys.txt
+
+# OS files
+.DS_Store
+Thumbs.db
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build files
+dist/
+build/

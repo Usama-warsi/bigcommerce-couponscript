@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigCommerce Coupon Manager - Advanced</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #ddd;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .tab-btn:hover {
+            border-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            margin-bottom: 20px;
+        }
+
+        .section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="email"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="email"]:focus,
+        input[type="date"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        .checkbox-group,
+        .radio-group {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .checkbox-item,
+        .radio-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-item:last-child,
+        .radio-item:last-child {
+            border-bottom: none;
+        }
+
+        .checkbox-item input,
+        .radio-item input {
+            width: auto;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .checkbox-item label,
+        .radio-item label {
+            margin-bottom: 0;
+            font-weight: normal;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            color: #1565c0;
+        }
+
+        .status-box {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border-left: 4px solid #28a745;
+        }
+
+        .status-box.loading {
+            border-left-color: #ffc107;
+        }
+
+        .status-box.error {
+            border-left-color: #dc3545;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .selected-items {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            min-height: 40px;
+            border: 1px dashed #667eea;
+        }
+
+        .item-tag {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            margin: 5px 5px 5px 0;
+            font-size: 0.85em;
+        }
+
+        .item-tag .remove {
+            margin-left: 5px;
+            cursor: pointer;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .grid-3 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .help-text {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .code-sample {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎟️ BigCommerce Coupon Manager - Advanced</h1>
+            <p>Create and manage coupons with full API feature support</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('basic')">📋 Basic Settings</button>
+            <button class="tab-btn" onclick="switchTab('targeting')">🎯 Targeting</button>
+            <button class="tab-btn" onclick="switchTab('restrictions')">🔒 Restrictions</button>
+            <button class="tab-btn" onclick="switchTab('advanced')">⚙️ Advanced</button>
+            <button class="tab-btn" onclick="switchTab('preview')">👁️ Preview</button>
+        </div>
+
+        <!-- BASIC SETTINGS TAB -->
+        <div id="basic" class="tab-content active">
+            <div class="section">
+                <h3>Coupon Code & Name</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="codePrefix">Code Prefix *</label>
+                        <input type="text" id="codePrefix" placeholder="e.g., GETLINKED" value="GETLINKED" required>
+                        <span class="help-text">Codes will be like: GETLINKED993JTO</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="namePrefix">Name Prefix *</label>
+                        <input type="text" id="namePrefix" placeholder="e.g., SHOPIFY 100 OFF" value="SHOPIFY 100 OFF" required>
+                        <span class="help-text">Names will be like: SHOPIFY 100 OFF 1 of 100</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Discount Type & Amount</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="discountType">Discount Type *</label>
+                        <select id="discountType" onchange="updateDiscountDisplay()" required>
+                            <option value="percentage_discount">Percentage Discount (%)</option>
+                            <option value="fixed_discount">Fixed Discount ($)</option>
+                            <option value="shipping_discount">Free Shipping</option>
+                        </select>
+                        <span class="help-text">Select how the discount is applied</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="discountAmount" id="discountAmountLabel">Discount Amount (%) *</label>
+                        <input type="number" id="discountAmount" min="0" max="100" value="100" step="0.01" required>
+                        <span class="help-text" id="discountAmountHelp">0-100%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Quantity & Expiry</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="quantity">Number of Coupons *</label>
+                        <input type="number" id="quantity" min="1" max="800" value="10" required>
+                        <span class="help-text">Generate 1-800 coupons</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="expiryDate">Expiry Date (Optional)</label>
+                        <input type="date" id="expiryDate">
+                        <span class="help-text">Leave blank for 30 days from now</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-primary" onclick="loadProducts()">🔄 Load Products & Categories</button>
+            </div>
+        </div>
+
+        <!-- TARGETING TAB -->
+        <div id="targeting" class="tab-content">
+            <div class="section">
+                <h3>Apply To</h3>
+                <div class="info-box">
+                    Specify which products or categories this coupon applies to
+                </div>
+                
+                <div class="form-group">
+                    <label>Apply To *</label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="applyAll" name="applyTo" value="all" checked onchange="toggleProductSelection()">
+                            <label for="applyAll">All Products</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="applyProducts" name="applyTo" value="products" onchange="toggleProductSelection()">
+                            <label for="applyProducts">Specific Products</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="applyCategories" name="applyTo" value="categories" onchange="toggleProductSelection()">
+                            <label for="applyCategories">Specific Categories</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="productCategorySelector" style="display: none;">
+                    <div class="form-group">
+                        <label for="productSearch">Search</label>
+                        <input type="text" id="productSearch" placeholder="Search by name or ID..." onkeyup="filterItems()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Selected Items (<span id="selectedCount">0</span>)</label>
+                        <div class="checkbox-group">
+                            <div id="itemsList"></div>
+                        </div>
+                    </div>
+
+                    <div class="selected-items" id="selectedItemsDisplay"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESTRICTIONS TAB -->
+        <div id="restrictions" class="tab-content">
+            <div class="section">
+                <h3>Purchase Restrictions</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="minPurchase">Minimum Purchase Amount ($)</label>
+                        <input type="number" id="minPurchase" min="0" value="0" step="0.01">
+                        <span class="help-text">Leave 0 for no minimum</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="maxPurchase">Maximum Purchase Amount ($)</label>
+                        <input type="number" id="maxPurchase" min="0" step="0.01">
+                        <span class="help-text">Leave blank for no maximum</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Usage Limits</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="maxUses">Total Uses *</label>
+                        <input type="number" id="maxUses" min="0" value="0">
+                        <span class="help-text">0 = Unlimited</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="maxUsesPerCustomer">Uses Per Customer *</label>
+                        <input type="number" id="maxUsesPerCustomer" min="0" value="1" required>
+                        <span class="help-text">0 = Unlimited per customer</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Customer Restrictions</h3>
+                
+                <div class="form-group">
+                    <label for="restrictedTo">Restricted To</label>
+                    <input type="text" id="restrictedTo" placeholder="Comma-separated customer group IDs">
+                    <span class="help-text">Leave blank for all customers</span>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Shipping Restrictions</h3>
+                
+                <div class="form-group">
+                    <label for="shippingMethods">Shipping Methods</label>
+                    <input type="text" id="shippingMethods" placeholder="Comma-separated shipping method IDs">
+                    <span class="help-text">Leave blank for all shipping methods</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADVANCED TAB -->
+        <div id="advanced" class="tab-content">
+            <div class="section">
+                <h3>Coupon Status</h3>
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="enabled" checked>
+                        Enable Coupon
+                    </label>
+                    <span class="help-text">If unchecked, coupon will be created as disabled</span>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Coupon Code Format</h3>
+                
+                <div class="form-group">
+                    <label for="codeFormat">Format</label>
+                    <select id="codeFormat">
+                        <option value="alphanumeric">Alphanumeric (default)</option>
+                        <option value="uppercase">UPPERCASE</option>
+                        <option value="lowercase">lowercase</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="codeLength">Code Length</label>
+                    <input type="number" id="codeLength" min="5" max="20" value="15">
+                    <span class="help-text">Length of generated coupon codes</span>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>API Configuration</h3>
+                
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" rows="4" placeholder="Internal description for this coupon..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Coupon Type (Internal)</label>
+                    <select id="couponType">
+                        <option value="percentage_discount">Percentage Discount</option>
+                        <option value="fixed_discount">Fixed Discount</option>
+                        <option value="shipping_discount">Free Shipping</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Developer Info</h3>
+                <div class="info-box">
+                    API Version: v2/coupons<br>
+                    Rate Limit: 150ms between requests<br>
+                    Max per request: 250
+                </div>
+            </div>
+        </div>
+
+        <!-- PREVIEW TAB -->
+        <div id="preview" class="tab-content">
+            <div class="section">
+                <h3>Configuration Preview</h3>
+                <div id="previewContent" style="background: white; padding: 20px; border-radius: 5px; font-family: monospace; white-space: pre-wrap; word-break: break-all;"></div>
+            </div>
+
+            <div class="section">
+                <h3>Sample Coupon Data</h3>
+                <div id="sampleCoupon" style="background: white; padding: 20px; border-radius: 5px; font-family: monospace; white-space: pre-wrap; word-break: break-all;"></div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-primary" onclick="generateCoupons()">✨ Generate Coupons</button>
+                <button class="btn-secondary" onclick="updatePreview()">🔄 Update Preview</button>
+            </div>
+        </div>
+
+        <!-- STATUS SECTION -->
+        <div style="padding: 30px;">
+            <div id="statusBox" class="status-box" style="display: none;">
+                <span id="spinner" class="loading-spinner" style="display: none;"></span>
+                <span id="statusText"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        let allProducts = [];
+        let allCategories = [];
+        let selectedItems = [];
+
+        /* ==================== TAB NAVIGATION ==================== */
+
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active to clicked button
+            event.target.classList.add('active');
+
+            if (tabName === 'preview') {
+                updatePreview();
+            }
+        }
+
+        /* ==================== UI FUNCTIONS ==================== */
+
+        function showStatus(message, isLoading = false, isError = false) {
+            const box = document.getElementById('statusBox');
+            const spinner = document.getElementById('spinner');
+            const text = document.getElementById('statusText');
+            
+            box.style.display = 'block';
+            box.className = 'status-box' + (isLoading ? ' loading' : '') + (isError ? ' error' : '');
+            spinner.style.display = isLoading ? 'inline-block' : 'none';
+            text.textContent = message;
+        }
+
+        function hideStatus() {
+            document.getElementById('statusBox').style.display = 'none';
+        }
+
+        function updateDiscountDisplay() {
+            const type = document.getElementById('discountType').value;
+            const amountLabel = document.getElementById('discountAmountLabel');
+            const amountHelp = document.getElementById('discountAmountHelp');
+            const amountInput = document.getElementById('discountAmount');
+
+            if (type === 'percentage_discount') {
+                amountLabel.textContent = 'Discount Amount (%) *';
+                amountHelp.textContent = '0-100%';
+                amountInput.max = 100;
+                amountInput.value = 100;
+            } else if (type === 'fixed_discount') {
+                amountLabel.textContent = 'Discount Amount ($) *';
+                amountHelp.textContent = 'Dollar amount';
+                amountInput.max = 999999;
+                amountInput.value = 10;
+            } else {
+                amountLabel.textContent = 'N/A';
+                amountHelp.textContent = 'No amount needed for free shipping';
+                amountInput.value = 0;
+                amountInput.disabled = true;
+            }
+        }
+
+        function toggleProductSelection() {
+            const selector = document.getElementById('productCategorySelector');
+            const applyTo = document.querySelector('input[name="applyTo"]:checked').value;
+            
+            if (applyTo === 'all') {
+                selector.style.display = 'none';
+                selectedItems = [];
+                updateSelectedDisplay();
+            } else {
+                selector.style.display = 'block';
+                if (applyTo === 'products') {
+                    renderProducts();
+                } else {
+                    renderCategories();
+                }
+            }
+        }
+
+        function renderProducts() {
+            const list = document.getElementById('itemsList');
+            list.innerHTML = allProducts.map(product => `
+                <div class="checkbox-item">
+                    <input type="checkbox" value="${product.id}" id="item-${product.id}" 
+                        onchange="toggleItem(${product.id}, 'product')">
+                    <label for="item-${product.id}">
+                        <strong>${product.name}</strong> <span style="color: #999;">(ID: ${product.id})</span>
+                    </label>
+                </div>
+            `).join('');
+        }
+
+        function renderCategories() {
+            const list = document.getElementById('itemsList');
+            list.innerHTML = allCategories.map(category => `
+                <div class="checkbox-item">
+                    <input type="checkbox" value="${category.id}" id="item-${category.id}" 
+                        onchange="toggleItem(${category.id}, 'category')">
+                    <label for="item-${category.id}">
+                        <strong>${category.name}</strong> <span style="color: #999;">(ID: ${category.id})</span>
+                    </label>
+                </div>
+            `).join('');
+        }
+
+        function toggleItem(itemId, type) {
+            const checkbox = document.querySelector(`input[value="${itemId}"]`);
+            if (checkbox.checked) {
+                if (!selectedItems.includes(itemId)) {
+                    selectedItems.push(itemId);
+                }
+            } else {
+                selectedItems = selectedItems.filter(id => id !== itemId);
+            }
+            updateSelectedDisplay();
+        }
+
+        function updateSelectedDisplay() {
+            const applyTo = document.querySelector('input[name="applyTo"]:checked').value;
+            const container = document.getElementById('selectedItemsDisplay');
+            const count = document.getElementById('selectedCount');
+            
+            if (applyTo === 'all' || selectedItems.length === 0) {
+                container.innerHTML = applyTo === 'all' ? '<p style="color: #666;">Applies to all products</p>' : '<p style="color: #999;">No items selected</p>';
+                count.textContent = '0';
+            } else {
+                const items = applyTo === 'products' 
+                    ? allProducts.filter(p => selectedItems.includes(p.id))
+                    : allCategories.filter(c => selectedItems.includes(c.id));
+                
+                container.innerHTML = items.map(item => 
+                    `<span class="item-tag">${item.name} (ID: ${item.id}) <span class="remove" onclick="removeItem(${item.id})">✕</span></span>`
+                ).join('');
+                count.textContent = selectedItems.length;
+            }
+        }
+
+        function removeItem(itemId) {
+            selectedItems = selectedItems.filter(id => id !== itemId);
+            document.querySelector(`input[value="${itemId}"]`).checked = false;
+            updateSelectedDisplay();
+        }
+
+        function filterItems() {
+            const search = document.getElementById('productSearch').value.toLowerCase();
+            const items = document.querySelectorAll('.checkbox-item');
+            
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(search) ? 'flex' : 'none';
+            });
+        }
+
+        function updatePreview() {
+            const config = {
+                codePrefix: document.getElementById('codePrefix').value,
+                namePrefix: document.getElementById('namePrefix').value,
+                quantity: document.getElementById('quantity').value,
+                discountType: document.getElementById('discountType').value,
+                discountAmount: document.getElementById('discountAmount').value,
+                minPurchase: document.getElementById('minPurchase').value,
+                maxUsesPerCustomer: document.getElementById('maxUsesPerCustomer').value,
+                expiryDate: document.getElementById('expiryDate').value,
+                applyTo: document.querySelector('input[name="applyTo"]:checked').value,
+                selectedItems: selectedItems
+            };
+
+            document.getElementById('previewContent').textContent = JSON.stringify(config, null, 2);
+
+            // Generate sample coupon
+            const sampleCoupon = {
+                code: config.codePrefix + '123ABC',
+                name: config.namePrefix + ' 1 of ' + config.quantity,
+                type: config.discountType,
+                amount: config.discountAmount,
+                enabled: document.getElementById('enabled').checked,
+                min_purchase: parseFloat(config.minPurchase) || 0,
+                max_uses_per_customer: parseInt(config.maxUsesPerCustomer),
+                expires: 'Fri, 28 Feb 2026 00:00:00 GMT',
+                applies_to: {
+                    entity: config.applyTo === 'categories' ? 'categories' : 'products',
+                    ids: config.applyTo === 'all' ? [] : config.selectedItems
+                }
+            };
+
+            document.getElementById('sampleCoupon').textContent = JSON.stringify(sampleCoupon, null, 2);
+        }
+
+        /* ==================== API FUNCTIONS ==================== */
+
+        async function loadProducts() {
+            showStatus('Loading products and categories...', true);
+            try {
+                const response = await fetch(`${API_URL}/products`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    allProducts = data.products;
+                    allCategories = data.categories || [];
+                    renderProducts();
+                    hideStatus();
+                    showStatus(`✅ Loaded ${data.products.length} products and ${data.categories?.length || 0} categories`, false);
+                    setTimeout(hideStatus, 3000);
+                } else {
+                    showStatus(`❌ Error: ${data.message}`, false, true);
+                }
+            } catch (error) {
+                showStatus(`❌ Failed to load items: ${error.message}`, false, true);
+            }
+        }
+
+        async function generateCoupons() {
+            const applyTo = document.querySelector('input[name="applyTo"]:checked').value;
+            
+            if (applyTo !== 'all' && selectedItems.length === 0) {
+                showStatus('❌ Please select at least one item', false, true);
+                return;
+            }
+
+            const payload = {
+                quantity: parseInt(document.getElementById('quantity').value),
+                codePrefix: document.getElementById('codePrefix').value,
+                namePrefix: document.getElementById('namePrefix').value,
+                productIds: applyTo === 'all' ? [0] : selectedItems,
+                discount: parseFloat(document.getElementById('discountAmount').value),
+                minPurchase: parseFloat(document.getElementById('minPurchase').value),
+                maxUsesPerCustomer: parseInt(document.getElementById('maxUsesPerCustomer').value),
+                expiryDate: document.getElementById('expiryDate').value || null
+            };
+
+            showStatus(`Generating ${payload.quantity} coupons...`, true);
+
+            try {
+                const response = await fetch(`${API_URL}/generate-coupons`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showStatus(`✅ Successfully generated ${data.results.length} coupons!`, false);
+                    setTimeout(() => {
+                        if (data.downloadUrl) {
+                            window.location.href = data.downloadUrl;
+                        }
+                    }, 1000);
+                } else {
+                    showStatus(`❌ Error: ${data.message}`, false, true);
+                }
+            } catch (error) {
+                showStatus(`❌ Failed to generate coupons: ${error.message}`, false, true);
+            }
+        }
+
+        /* ==================== INITIALIZATION ==================== */
+
+        window.addEventListener('load', () => {
+            updateDiscountDisplay();
+        });
+    </script>
+</body>
+</html>
