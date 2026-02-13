@@ -15,31 +15,68 @@ const api = axios.create({
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 /**
- * Get all existing coupons from store with pagination
+ * Get total number of coupons in store
  */
-async function getExistingCoupons() {
+async function getCouponsCount() {
     try {
+        const res = await api.get('/v2/coupons/count');
+        return res.data.count || 0;
+    } catch (err) {
+        console.error('Error fetching coupon count:', err.message);
+        return 0;
+    }
+}
+
+/**
+ * Get existing coupons from store (paginated or all)
+ * @param {number} page - Page number (optional)
+ * @param {number} limit - Limit per page (optional)
+ */
+async function getExistingCoupons(page = null, limit = 250) {
+    try {
+        if (page !== null) {
+            // Get single page
+            const res = await api.get('/v2/coupons', {
+                params: { page, limit }
+            });
+            return res.data || [];
+        }
+
+        // Get all coupons (legacy behavior / for small stores)
         const allCoupons = [];
-        let page = 1;
+        let currentPage = 1;
         let hasMore = true;
 
         while (hasMore) {
             const res = await api.get('/v2/coupons', {
-                params: { page, limit: 250 }
+                params: { page: currentPage, limit: 250 }
             });
 
             if (res.data && res.data.length > 0) {
                 allCoupons.push(...res.data);
-                page++;
+                currentPage++;
+
+                // If we got fewer than 250, we've reached the end
+                if (res.data.length < 250) {
+                    hasMore = false;
+                }
             } else {
                 hasMore = false;
             }
+
+            // Safety break if store has too many coupons (150k+ is too much for this function)
+            if (currentPage > 20) {
+                console.warn('⚠️ Large store detected. Pagination is recommended.');
+                break;
+            }
+
             await sleep(50);
         }
 
         return allCoupons;
     } catch (err) {
-        console.error('Error fetching existing coupons:', err.message);
+        const errorDetails = err.response?.data || err.message;
+        console.error('Error fetching existing coupons:', typeof errorDetails === 'object' ? JSON.stringify(errorDetails) : errorDetails);
         return [];
     }
 }
@@ -113,9 +150,9 @@ async function createCoupon(couponData) {
         return { success: true, data: res.data };
     } catch (err) {
         const errorDetails = err.response?.data?.errors || err.response?.data || err.message;
-        return { 
-            success: false, 
-            error: typeof errorDetails === 'string' ? errorDetails : JSON.stringify(errorDetails) 
+        return {
+            success: false,
+            error: typeof errorDetails === 'string' ? errorDetails : JSON.stringify(errorDetails)
         };
     }
 }
@@ -123,6 +160,7 @@ async function createCoupon(couponData) {
 module.exports = {
     api,
     sleep,
+    getCouponsCount,
     getExistingCoupons,
     getAllProducts,
     getAllCategories,

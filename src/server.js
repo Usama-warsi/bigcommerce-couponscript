@@ -6,7 +6,7 @@ const fs = require('fs');
 const cors = require('cors');
 
 // Import utilities
-const { getExistingCoupons, getAllProducts, getAllCategories, createCoupon, sleep } = require('./utils/api');
+const { getExistingCoupons, getAllProducts, getAllCategories, createCoupon, sleep, getCouponsCount } = require('./utils/api');
 const { generateCouponCode, generateCouponName, createCouponData } = require('./utils/coupon');
 const { getExpiryDate } = require('./utils/date');
 
@@ -42,7 +42,7 @@ app.get('/api/products', async (req, res) => {
             getAllProducts(),
             getAllCategories()
         ]);
-        
+
         res.json({
             success: true,
             products: products.map(p => ({
@@ -67,11 +67,16 @@ app.get('/api/products', async (req, res) => {
  */
 app.get('/api/existing-coupons', async (req, res) => {
     try {
-        console.log('Fetching existing coupons...');
-        const coupons = await getExistingCoupons();
-        
+        const page = parseInt(req.query.page) || null;
+        const limit = parseInt(req.query.limit) || 250;
+
+        console.log(`Fetching existing coupons (page: ${page || 'all'}, limit: ${limit})...`);
+        const coupons = await getExistingCoupons(page, limit);
+        const totalCount = await getCouponsCount();
+
         res.json({
             success: true,
+            totalCount,
             coupons: coupons.map(c => ({
                 id: c.id,
                 code: c.code,
@@ -95,11 +100,16 @@ app.get('/api/existing-coupons', async (req, res) => {
  */
 app.get('/api/coupons', async (req, res) => {
     try {
-        console.log('Fetching all coupons...');
-        const coupons = await getExistingCoupons();
-        
+        const page = parseInt(req.query.page) || null;
+        const limit = parseInt(req.query.limit) || 250;
+
+        console.log(`Fetching coupons (page: ${page || 'all'}, limit: ${limit})...`);
+        const coupons = await getExistingCoupons(page, limit);
+        const totalCount = await getCouponsCount();
+
         res.json({
             success: true,
+            totalCount,
             coupons: coupons.map(c => ({
                 id: c.id,
                 code: c.code,
@@ -130,7 +140,9 @@ app.post('/api/generate-coupons', async (req, res) => {
             productIds,
             targeting = 'products',
             discount = 100,
+            discountType = 'percentage_discount',
             maxUsesPerCustomer = 1,
+            totalUses = 0,
             minPurchase = 0,
             expiryDate = null
         } = req.body;
@@ -152,9 +164,9 @@ app.post('/api/generate-coupons', async (req, res) => {
         res.setHeader('Cache-Control', 'no-cache');
         res.setHeader('Connection', 'keep-alive');
 
-        // Get existing coupon codes
-        const existingCoupons = await getExistingCoupons();
-        const existingCodes = new Set(existingCoupons.map(c => c.code));
+        // Note: For large stores (150k+), we skip pre-fetching all codes
+        // and rely on BigCommerce API to return 'conflict' for duplicates.
+        const existingCodes = new Set(); // Local cache for this generation session only
 
         const results = [];
         let successCount = 0;
@@ -192,9 +204,10 @@ app.post('/api/generate-coupons', async (req, res) => {
                 const couponData = {
                     code,
                     name: couponName,
-                    type: 'percentage_discount',
+                    type: discountType,
                     amount: discount,
                     enabled: true,
+                    max_uses: totalUses,
                     max_uses_per_customer: maxUsesPerCustomer,
                     min_purchase: minPurchase,
                     expires: expiresDate,
@@ -228,7 +241,7 @@ app.post('/api/generate-coupons', async (req, res) => {
                         // Generate a new code with appended attempt number for guaranteed uniqueness
                         const randomPart = Math.random().toString(36).substring(2, 6).toUpperCase();
                         code = `${codePrefix}${timestamp}${apiAttempts}${randomPart}`;
-                        
+
                         // If still exists, add more entropy
                         if (existingCodes.has(code) || generatedCodes.has(code)) {
                             code = `${codePrefix}X${timestamp}${apiAttempts}${randomPart}`;
@@ -258,7 +271,7 @@ app.post('/api/generate-coupons', async (req, res) => {
             if (!created && apiAttempts >= 10) {
                 console.log(`❌ Failed: Could not create coupon after 10 attempts`);
                 skipCount++;
-                
+
                 const failedResult = {
                     code,
                     name: `${namePrefix} ${i + 1} of ${quantity}`,
@@ -285,8 +298,8 @@ app.post('/api/generate-coupons', async (req, res) => {
         console.log(`   📁 File: ${filename}`);
 
         // Send final summary
-        res.write(`data: ${JSON.stringify({ 
-            type: 'complete', 
+        res.write(`data: ${JSON.stringify({
+            type: 'complete',
             stats: {
                 created: successCount,
                 failed: skipCount,
@@ -311,7 +324,7 @@ app.post('/api/generate-coupons', async (req, res) => {
  */
 app.post('/api/create-single-coupon', async (req, res) => {
     try {
-        const { code, name, discount, productIds, maxUsesPerCustomer = 1, minPurchase = 0, expiryDate = null } = req.body;
+        const { code, name, discount, discountType = 'percentage_discount', productIds, maxUsesPerCustomer = 1, totalUses = 0, minPurchase = 0, expiryDate = null } = req.body;
 
         // Create RFC-2822 date format (30 days from now if not specified)
         let expiresDate = expiryDate;
@@ -324,9 +337,10 @@ app.post('/api/create-single-coupon', async (req, res) => {
         const couponData = {
             code,
             name: name || code,
-            type: 'percentage_discount',
+            type: discountType,
             amount: discount,
             enabled: true,
+            max_uses: totalUses,
             max_uses_per_customer: maxUsesPerCustomer,
             min_purchase: minPurchase,
             expires: expiresDate,
@@ -376,7 +390,7 @@ app.get('/:filename', (req, res) => {
         res.download(filepath, filename, (err) => {
             if (!err) {
                 // Delete file after download
-                setTimeout(() => fs.unlink(filepath, () => {}), 1000);
+                setTimeout(() => fs.unlink(filepath, () => { }), 1000);
             }
         });
     } else {

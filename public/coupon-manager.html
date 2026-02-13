@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,7 +24,7 @@
             margin: 0 auto;
             background: white;
             border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
         }
 
@@ -83,8 +84,13 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         .form-grid {
@@ -285,8 +291,15 @@
         }
 
         @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .status-box.success {
@@ -329,8 +342,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .stats {
@@ -396,6 +414,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -428,13 +447,15 @@
 
                 <div class="form-group">
                     <label for="couponname">Coupon Name Prefix <span class="required">*</span></label>
-                    <input type="text" id="couponname" placeholder="e.g., SHOPIFY 100 OFF" value="SHOPIFY 100 OFF" required>
+                    <input type="text" id="couponname" placeholder="e.g., SHOPIFY 100 OFF" value="SHOPIFY 100 OFF"
+                        required>
                     <small>Generated: PREFIX + number (e.g., SHOPIFY 100 OFF 1 of 100)</small>
                 </div>
 
                 <div class="form-group">
                     <label for="quantity">Number of Coupons <span class="required">*</span></label>
-                    <input type="number" id="quantity" min="1" max="5000" value="100" required onchange="updatePreview()">
+                    <input type="number" id="quantity" min="1" max="5000" value="100" required
+                        onchange="updatePreview()">
                     <small>Can create up to 2000-5000 in one batch</small>
                 </div>
             </div>
@@ -445,15 +466,18 @@
                 <label style="margin-bottom: 15px;">Discount Type <span class="required">*</span></label>
                 <div class="radio-group">
                     <div class="radio-item" onclick="selectDiscountType('percentage')">
-                        <input type="radio" id="type-percentage" name="discountType" value="percentage_discount" checked onchange="updateDiscountDisplay()">
+                        <input type="radio" id="type-percentage" name="discountType" value="percentage_discount" checked
+                            onchange="updateDiscountDisplay()">
                         <label for="type-percentage">Percentage Off (%)</label>
                     </div>
                     <div class="radio-item" onclick="selectDiscountType('fixed')">
-                        <input type="radio" id="type-fixed" name="discountType" value="fixed_discount" onchange="updateDiscountDisplay()">
+                        <input type="radio" id="type-fixed" name="discountType" value="fixed_discount"
+                            onchange="updateDiscountDisplay()">
                         <label for="type-fixed">Dollar Amount Off ($)</label>
                     </div>
                     <div class="radio-item" onclick="selectDiscountType('shipping')">
-                        <input type="radio" id="type-shipping" name="discountType" value="shipping_discount" onchange="updateDiscountDisplay()">
+                        <input type="radio" id="type-shipping" name="discountType" value="shipping_discount"
+                            onchange="updateDiscountDisplay()">
                         <label for="type-shipping">Free Shipping</label>
                     </div>
                 </div>
@@ -461,7 +485,8 @@
 
             <div id="discountAmountGroup" class="form-group" style="margin-top: 20px;">
                 <label for="discountAmount">Discount Amount <span class="required">*</span></label>
-                <input type="number" id="discountAmount" min="0" max="100" value="100" step="0.01" onchange="updatePreview()">
+                <input type="number" id="discountAmount" min="0" max="100" value="100" step="0.01"
+                    onchange="updatePreview()">
                 <small id="discountHint">0-100% off</small>
             </div>
 
@@ -508,11 +533,13 @@
                 <label style="margin-bottom: 15px;">Apply To <span class="required">*</span></label>
                 <div class="radio-group">
                     <div class="radio-item" onclick="toggleTargeting('products')">
-                        <input type="radio" id="target-products" name="targeting" value="products" checked onchange="updateTargeting()">
+                        <input type="radio" id="target-products" name="targeting" value="products" checked
+                            onchange="updateTargeting()">
                         <label for="target-products">Specific Products Only</label>
                     </div>
                     <div class="radio-item" onclick="toggleTargeting('categories')">
-                        <input type="radio" id="target-categories" name="targeting" value="categories" onchange="updateTargeting()">
+                        <input type="radio" id="target-categories" name="targeting" value="categories"
+                            onchange="updateTargeting()">
                         <label for="target-categories">Specific Categories Only</label>
                     </div>
                 </div>
@@ -522,11 +549,14 @@
             <div id="productsDiv" class="nested-fields">
                 <div class="section-title">Select Products</div>
                 <div class="search-box">
-                    <input type="text" id="productSearch" placeholder="Search by name or ID..." onkeyup="filterProducts()">
+                    <input type="text" id="productSearch" placeholder="Search by name or ID..."
+                        onkeyup="filterProducts()">
                 </div>
-                <button class="btn-secondary" onclick="loadProducts()" style="width: 100%; margin-bottom: 12px;">🔄 Load Products from Store</button>
+                <button class="btn-secondary" onclick="loadProducts()" style="width: 100%; margin-bottom: 12px;">🔄 Load
+                    Products from Store</button>
                 <div class="item-list" id="productList">
-                    <p style="color: #999; padding: 20px; text-align: center;">Click "Load Products" to fetch from store</p>
+                    <p style="color: #999; padding: 20px; text-align: center;">Click "Load Products" to fetch from store
+                    </p>
                 </div>
                 <div id="selectedProductsList" style="margin-top: 15px;"></div>
             </div>
@@ -535,11 +565,14 @@
             <div id="categoriesDiv" class="nested-fields">
                 <div class="section-title">Select Categories</div>
                 <div class="search-box">
-                    <input type="text" id="categorySearch" placeholder="Search by name or ID..." onkeyup="filterCategories()">
+                    <input type="text" id="categorySearch" placeholder="Search by name or ID..."
+                        onkeyup="filterCategories()">
                 </div>
-                <button class="btn-secondary" onclick="loadCategories()" style="width: 100%; margin-bottom: 12px;">🔄 Load Categories from Store</button>
+                <button class="btn-secondary" onclick="loadCategories()" style="width: 100%; margin-bottom: 12px;">🔄
+                    Load Categories from Store</button>
                 <div class="item-list" id="categoryList">
-                    <p style="color: #999; padding: 20px; text-align: center;">Click "Load Categories" to fetch from store</p>
+                    <p style="color: #999; padding: 20px; text-align: center;">Click "Load Categories" to fetch from
+                        store</p>
                 </div>
                 <div id="selectedCategoriesList" style="margin-top: 15px;"></div>
             </div>
@@ -553,7 +586,8 @@
                 <label style="margin-bottom: 15px;">Limit Number of Uses</label>
                 <div class="checkbox-group">
                     <div class="checkbox-item">
-                        <input type="checkbox" id="limitTotalUses" name="limitTotalUses" onchange="toggleElement('totalUsesDiv')">
+                        <input type="checkbox" id="limitTotalUses" name="limitTotalUses"
+                            onchange="toggleElement('totalUsesDiv')">
                         <label for="limitTotalUses">Limit total uses globally</label>
                     </div>
                 </div>
@@ -567,7 +601,8 @@
                 <label style="margin-bottom: 15px;">Per Customer Limit</label>
                 <div class="checkbox-group">
                     <div class="checkbox-item">
-                        <input type="checkbox" id="limitPerCustomer" name="limitPerCustomer" checked onchange="toggleElement('perCustomerDiv')">
+                        <input type="checkbox" id="limitPerCustomer" name="limitPerCustomer" checked
+                            onchange="toggleElement('perCustomerDiv')">
                         <label for="limitPerCustomer">Limit uses per customer</label>
                     </div>
                 </div>
@@ -578,14 +613,19 @@
             </div>
 
             <div class="form-group" style="margin-bottom: 30px;">
-                <label style="margin-bottom: 15px;">Customer Group Restriction <span class="optional">(Optional)</span></label>
-                <textarea id="customerGroups" placeholder="Enter comma-separated customer group IDs&#10;Example: 1,2,3" style="height: 80px;" onchange="updatePreview()"></textarea>
+                <label style="margin-bottom: 15px;">Customer Group Restriction <span
+                        class="optional">(Optional)</span></label>
+                <textarea id="customerGroups" placeholder="Enter comma-separated customer group IDs&#10;Example: 1,2,3"
+                    style="height: 80px;" onchange="updatePreview()"></textarea>
                 <small>Leave blank to allow all customer groups</small>
             </div>
 
             <div class="form-group">
-                <label style="margin-bottom: 15px;">Shipping Method Restriction <span class="optional">(Optional)</span></label>
-                <textarea id="shippingMethods" placeholder="Enter comma-separated shipping method IDs&#10;Example: 1,2,3" style="height: 80px;" onchange="updatePreview()"></textarea>
+                <label style="margin-bottom: 15px;">Shipping Method Restriction <span
+                        class="optional">(Optional)</span></label>
+                <textarea id="shippingMethods"
+                    placeholder="Enter comma-separated shipping method IDs&#10;Example: 1,2,3" style="height: 80px;"
+                    onchange="updatePreview()"></textarea>
                 <small>Leave blank to allow all shipping methods</small>
             </div>
         </div>
@@ -596,7 +636,8 @@
 
             <div class="form-group">
                 <label for="description">Coupon Description <span class="optional">(Internal Notes)</span></label>
-                <textarea id="description" placeholder="Internal notes about this coupon..." style="height: 100px;" onchange="updatePreview()"></textarea>
+                <textarea id="description" placeholder="Internal notes about this coupon..." style="height: 100px;"
+                    onchange="updatePreview()"></textarea>
                 <small>Not shown to customers, for your reference</small>
             </div>
 
@@ -623,9 +664,12 @@
                 <label style="margin-bottom: 15px;">Batch Processing Information</label>
                 <div style="background: #e7f3ff; padding: 15px; border-radius: 5px; border-left: 4px solid #2196F3;">
                     <p><strong>✅ Batch Creation:</strong> You can create up to 2000-5000 coupons in one go</p>
-                    <p style="margin-top: 10px;"><strong>⏱️ Processing Time:</strong> Approximately 3-10 seconds per 100 coupons</p>
-                    <p style="margin-top: 10px;"><strong>📊 Auto Retry:</strong> If a code exists, system generates new unique code automatically</p>
-                    <p style="margin-top: 10px;"><strong>📥 Excel Export:</strong> All created coupons exported to timestamped Excel file</p>
+                    <p style="margin-top: 10px;"><strong>⏱️ Processing Time:</strong> Approximately 3-10 seconds per 100
+                        coupons</p>
+                    <p style="margin-top: 10px;"><strong>📊 Auto Retry:</strong> If a code exists, system generates new
+                        unique code automatically</p>
+                    <p style="margin-top: 10px;"><strong>📥 Excel Export:</strong> All created coupons exported to
+                        timestamped Excel file</p>
                 </div>
             </div>
         </div>
@@ -653,34 +697,53 @@
         <!-- TAB 6: RESULTS -->
         <div id="results" class="tab-content">
             <div class="section-title">📊 Generation Results</div>
-            
-            <div id="resultsContainer" style="margin-top: 20px; max-height: 500px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px;">
+
+            <div id="resultsContainer"
+                style="margin-top: 20px; max-height: 500px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px;">
                 <div style="text-align: center; color: #999; padding: 40px 20px;">
                     <p>No coupons generated yet.</p>
                     <p style="font-size: 14px; margin-top: 10px;">Generate coupons to see results here</p>
                 </div>
             </div>
 
-            <div id="resultsStats" style="display: none; margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 8px;">
+            <div id="resultsStats"
+                style="display: none; margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 8px;">
                 <h3 style="margin-bottom: 15px;">📈 Generation Statistics</h3>
                 <div id="resultsStatsContent"></div>
-                <button class="btn-secondary" onclick="downloadResults()" style="margin-top: 15px;">⬇️ Download Results</button>
+                <button class="btn-secondary" onclick="downloadResults()" style="margin-top: 15px;">⬇️ Download
+                    Results</button>
             </div>
         </div>
 
         <!-- TAB 7: ALL COUPONS -->
         <div id="all-coupons" class="tab-content">
             <div class="section-title">📋 All Store Coupons</div>
-            
-            <div style="margin-top: 20px;">
-                <button class="btn-secondary" onclick="loadAllCoupons()" style="margin-bottom: 15px;">🔄 Refresh Coupons</button>
-            </div>
 
-            <div id="allCouponsContainer" style="max-height: 500px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px;">
-                <div style="text-align: center; color: #999; padding: 40px 20px;">
-                    <p>Click "Refresh Coupons" to load all coupons from your store</p>
+            <div
+                style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <button class="btn-secondary" onclick="loadAllCoupons(1)" style="margin-bottom: 0;">🔄 Refresh
+                    Coupons</button>
+
+                <div id="paginationControls" style="display: flex; gap: 10px; align-items: center;">
+                    <button class="btn-secondary" id="btnPrevPage" onclick="changePage(-1)" disabled
+                        style="padding: 8px 15px;">&laquo; Prev</button>
+                    <span id="currentPageDisplay"
+                        style="font-weight: bold; background: #eee; padding: 8px 15px; border-radius: 5px;">Page
+                        1</span>
+                    <button class="btn-secondary" id="btnNextPage" onclick="changePage(1)"
+                        style="padding: 8px 15px;">Next &raquo;</button>
                 </div>
             </div>
+
+            <div id="allCouponsContainer"
+                style="max-height: 500px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px;">
+                <div style="text-align: center; color: #999; padding: 40px 20px;">
+                    <p>Click "Refresh Coupons" to load coupons from your store</p>
+                </div>
+            </div>
+
+            <div id="allCouponsStats"
+                style="margin-top: 15px; padding: 15px; background: #f5f5f5; border-radius: 8px; display: none;"></div>
         </div>
     </div>
 
@@ -736,7 +799,7 @@
         function toggleTargeting(type) {
             document.getElementById('productsDiv').classList.remove('show');
             document.getElementById('categoriesDiv').classList.remove('show');
-            
+
             if (type === 'products') {
                 document.getElementById('productsDiv').classList.add('show');
             } else if (type === 'categories') {
@@ -776,9 +839,9 @@
             const namePrefix = document.getElementById('couponname').value.trim();
             const quantity = parseInt(document.getElementById('quantity').value);
             const targeting = document.querySelector('input[name="targeting"]:checked').value;
-            
+
             let valid = codePrefix && namePrefix && quantity >= 1;
-            
+
             if (targeting === 'products') {
                 valid = valid && selectedProducts.size > 0;
             } else if (targeting === 'categories') {
@@ -882,7 +945,7 @@ Targeting: ${targeting === 'products' ? `${selectedProducts.size} Products` : `$
             try {
                 const response = await fetch(`${API_URL}/products`);
                 const data = await response.json();
-                
+
                 if (data.success && data.products) {
                     allProducts = data.products;
                     renderProducts();
@@ -901,7 +964,7 @@ Targeting: ${targeting === 'products' ? `${selectedProducts.size} Products` : `$
             try {
                 const response = await fetch(`${API_URL}/products`);
                 const data = await response.json();
-                
+
                 if (data.success && data.categories) {
                     allCategories = data.categories;
                     renderCategories();
@@ -965,7 +1028,7 @@ Targeting: ${targeting === 'products' ? `${selectedProducts.size} Products` : `$
                 container.innerHTML = '<p style="color: #999;">No products selected</p>';
             } else {
                 const products = allProducts.filter(p => selectedProducts.has(p.id));
-                container.innerHTML = '<p style="margin-bottom: 10px;"><strong>Selected:</strong></p>' + 
+                container.innerHTML = '<p style="margin-bottom: 10px;"><strong>Selected:</strong></p>' +
                     products.map(p => `
                     <span class="product-tag">
                         ${p.name} (${p.id}) 
@@ -982,7 +1045,7 @@ Targeting: ${targeting === 'products' ? `${selectedProducts.size} Products` : `$
                 container.innerHTML = '<p style="color: #999;">No categories selected</p>';
             } else {
                 const categories = allCategories.filter(c => selectedCategories.has(c.id));
-                container.innerHTML = '<p style="margin-bottom: 10px;"><strong>Selected:</strong></p>' + 
+                container.innerHTML = '<p style="margin-bottom: 10px;"><strong>Selected:</strong></p>' +
                     categories.map(c => `
                     <span class="product-tag">
                         ${c.name} (${c.id}) 
@@ -1031,7 +1094,7 @@ Targeting: ${targeting === 'products' ? `${selectedProducts.size} Products` : `$
         async function generateCoupons() {
             const targeting = document.querySelector('input[name="targeting"]:checked').value;
             let productIds = [];
-            
+
             if (targeting === 'products') {
                 productIds = Array.from(selectedProducts);
             } else if (targeting === 'categories') {
@@ -1047,7 +1110,7 @@ Targeting: ${targeting === 'products' ? `${selectedProducts.size} Products` : `$
                 minPurchase: parseFloat(document.getElementById('minPurchase').value) || 0,
                 maxPurchase: parseFloat(document.getElementById('maxPurchase').value) || 0,
                 maxUsesPerCustomer: parseInt(document.getElementById('usesPerCustomer').value) || 1,
-                totalUses: document.getElementById('limitTotalUses').checked ? 
+                totalUses: document.getElementById('limitTotalUses').checked ?
                     parseInt(document.getElementById('totalUses').value) : 0,
                 expiryDate: document.getElementById('expiryDate').value || null,
                 enabled: document.getElementById('enabled').checked,
@@ -1057,11 +1120,11 @@ Targeting: ${targeting === 'products' ? `${selectedProducts.size} Products` : `$
             };
 
             showStatus(`⏳ Generating ${payload.quantity} coupons... This may take a moment.`, 'loading');
-            
+
             // Switch to results tab
             switchTab('results');
             clearResults();
-            
+
             window.liveResults = [];
 
             try {
@@ -1091,7 +1154,7 @@ Targeting: ${targeting === 'products' ? `${selectedProducts.size} Products` : `$
                         if (line.startsWith('data: ')) {
                             try {
                                 const event = JSON.parse(line.slice(6));
-                                
+
                                 if (event.type === 'result') {
                                     window.liveResults.push(event.data);
                                     displayLiveResult(event.data);
@@ -1112,7 +1175,7 @@ Targeting: ${targeting === 'products' ? `${selectedProducts.size} Products` : `$
 
         function displayLiveResult(result) {
             const container = document.getElementById('resultsContainer');
-            
+
             // Initialize table if not exists
             if (!container.querySelector('table')) {
                 let html = '<table style="width: 100%; border-collapse: collapse; margin-top: 10px;">';
@@ -1132,7 +1195,7 @@ Targeting: ${targeting === 'products' ? `${selectedProducts.size} Products` : `$
             const rowCount = tbody.children.length;
             const bgColor = rowCount % 2 === 0 ? '#fff' : '#f9f9f9';
             const statusIcon = result.status === 'Created' ? '✅' : '❌';
-            
+
             const row = document.createElement('tr');
             row.style.background = bgColor;
             row.style.borderBottom = '1px solid #eee';
@@ -1154,7 +1217,7 @@ Targeting: ${targeting === 'products' ? `${selectedProducts.size} Products` : `$
 
         function displayResults(data) {
             const container = document.getElementById('resultsContainer');
-            
+
             if (!data.results || data.results.length === 0) {
                 container.innerHTML = '<div style="text-align: center; color: #999;"><p>No coupons were generated.</p></div>';
                 return;
@@ -1191,7 +1254,7 @@ Targeting: ${targeting === 'products' ? `${selectedProducts.size} Products` : `$
         function showResultsStats(stats) {
             const statsDiv = document.getElementById('resultsStats');
             const statsContent = document.getElementById('resultsStatsContent');
-            
+
             const created = stats.created || 0;
             const failed = stats.failed || 0;
             const total = stats.total || 0;
@@ -1213,14 +1276,14 @@ Targeting: ${targeting === 'products' ? `${selectedProducts.size} Products` : `$
 
             statsContent.innerHTML = html;
             statsDiv.style.display = 'block';
-            
+
             // Store current results for download
             window.currentStats = stats;
         }
 
         function downloadResults() {
             if (!window.currentStats) return;
-            
+
             const stats = window.currentStats;
             if (stats.downloadUrl) {
                 window.location.href = stats.downloadUrl;
@@ -1229,22 +1292,104 @@ Targeting: ${targeting === 'products' ? `${selectedProducts.size} Products` : `$
 
         /* ==================== ALL COUPONS TAB ==================== */
 
-        async function loadAllCoupons() {
+        /* ==================== ALL COUPONS TAB ==================== */
+
+        let currentCouponPage = 1;
+
+        async function loadAllCoupons(page = 1) {
+            currentCouponPage = page;
             const container = document.getElementById('allCouponsContainer');
-            container.innerHTML = '<div style="text-align: center; color: #999; padding: 40px 20px;"><p>Loading coupons...</p></div>';
+            container.innerHTML = '<div style="text-align: center; color: #999; padding: 40px 20px;"><p>Loading coupons (Page ' + page + ')...</p></div>';
+
+            // Hide stats while loading
+            const statsDiv = document.getElementById('allCouponsStats');
+            if (statsDiv) statsDiv.style.display = 'none';
 
             try {
-                const response = await fetch(`${API_URL}/coupons`);
+                const response = await fetch(`${API_URL}/coupons?page=${page}&limit=100`);
                 const data = await response.json();
 
                 if (data.success && data.coupons && data.coupons.length > 0) {
                     displayAllCoupons(data.coupons);
+
+                    // Update stats
+                    const totalPages = data.totalCount ? Math.ceil(data.totalCount / 100) : 1;
+                    const statsDiv = document.getElementById('allCouponsStats');
+                    statsDiv.innerHTML = `<p style="margin: 0;">📊 Showing <strong>${data.coupons.length}</strong> coupons on Page <strong>${page}</strong> of <strong>${totalPages}</strong></p>`;
+                    statsDiv.style.display = 'block';
+
+                    renderPagination(page, totalPages);
                 } else {
-                    container.innerHTML = '<div style="text-align: center; color: #999; padding: 40px 20px;"><p>No coupons found in store</p></div>';
+                    container.innerHTML = '<div style="text-align: center; color: #999; padding: 40px 20px;"><p>No more coupons found</p></div>';
                 }
             } catch (error) {
                 container.innerHTML = `<div style="text-align: center; color: #d32f2f; padding: 40px 20px;"><p>❌ Failed to load coupons: ${error.message}</p></div>`;
             }
+        }
+
+        function renderPagination(currentPage, totalPages) {
+            const paginationContainer = document.getElementById('paginationControls');
+            // Ensure we have a container for the new pagination
+            if (!paginationContainer) return;
+
+            let html = '<div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 20px; font-family: sans-serif; font-size: 14px; color: #4a90e2;">';
+
+            // Prev
+            if (currentPage > 1) {
+                html += `<span style="cursor: pointer;" onclick="loadAllCoupons(${currentPage - 1})">Prev</span>`;
+            } else {
+                html += `<span style="color: #ccc; cursor: default;">Prev</span>`;
+            }
+
+            // Page 1
+            if (currentPage === 1) {
+                html += `<span style="background: #999; color: white; padding: 4px 8px; border-radius: 2px; cursor: default;">1</span>`;
+            } else {
+                html += `<span style="cursor: pointer;" onclick="loadAllCoupons(1)">1</span>`;
+            }
+
+            // Ellipsis or middle pages
+            let startPage = Math.max(2, currentPage - 2);
+            let endPage = Math.min(totalPages - 1, currentPage + 2);
+
+            if (startPage > 2) {
+                html += `<span>...</span>`;
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                if (i === currentPage) {
+                    html += `<span style="background: #999; color: white; padding: 4px 8px; border-radius: 2px; cursor: default;">${i}</span>`;
+                } else {
+                    html += `<span style="cursor: pointer;" onclick="loadAllCoupons(${i})">${i}</span>`;
+                }
+            }
+
+            if (endPage < totalPages - 1) {
+                html += `<span>...</span>`;
+            }
+
+            // Last page (if more than 1 page)
+            if (totalPages > 1) {
+                if (currentPage === totalPages) {
+                    html += `<span style="background: #999; color: white; padding: 4px 8px; border-radius: 2px; cursor: default;">${totalPages}</span>`;
+                } else {
+                    html += `<span style="cursor: pointer;" onclick="loadAllCoupons(${totalPages})">${totalPages}</span>`;
+                }
+            }
+
+            // Next
+            if (currentPage < totalPages) {
+                html += `<span style="cursor: pointer;" onclick="loadAllCoupons(${currentPage + 1})">Next</span>`;
+            } else {
+                html += `<span style="color: #ccc; cursor: default;">Next</span>`;
+            }
+
+            html += '</div>';
+            paginationContainer.innerHTML = html;
+        }
+
+        function changePage(delta) {
+            // Legacy, can keep or remove. loadAllCoupons handles it now.
         }
 
         function displayAllCoupons(coupons) {
@@ -1264,7 +1409,7 @@ Targeting: ${targeting === 'products' ? `${selectedProducts.size} Products` : `$
                 const bgColor = idx % 2 === 0 ? '#fff' : '#f9f9f9';
                 const statusIcon = coupon.enabled ? '✅' : '⭕';
                 const createdDate = coupon.date_created ? new Date(coupon.date_created).toLocaleString() : '-';
-                
+
                 html += `<tr style="background: ${bgColor}; border-bottom: 1px solid #eee;">`;
                 html += `<td style="padding: 10px; border: 1px solid #ddd;"><code style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px;">${coupon.code}</code></td>`;
                 html += `<td style="padding: 10px; border: 1px solid #ddd;">${coupon.name || '-'}</td>`;
@@ -1277,15 +1422,6 @@ Targeting: ${targeting === 'products' ? `${selectedProducts.size} Products` : `$
 
             html += '</tbody></table>';
             container.innerHTML = html;
-
-            // Show coupon count
-            const statsDiv = document.createElement('div');
-            statsDiv.style.marginTop = '15px';
-            statsDiv.style.padding = '15px';
-            statsDiv.style.background = '#f5f5f5';
-            statsDiv.style.borderRadius = '8px';
-            statsDiv.innerHTML = `<p style="margin: 0;">📊 Total Coupons: <strong>${coupons.length}</strong></p>`;
-            container.parentElement.appendChild(statsDiv);
         }
 
         /* ==================== INITIALIZATION ==================== */
@@ -1297,4 +1433,5 @@ Targeting: ${targeting === 'products' ? `${selectedProducts.size} Products` : `$
         });
     </script>
 </body>
+
 </html>
